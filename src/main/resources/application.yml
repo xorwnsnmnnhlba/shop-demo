@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/shop_demo
+    username: postgres
+    password: password
+
+jwt:
+  secret: SECRET
+
+portone:
+  rest_api_key: REST-API-KEY
+  rest_api_secret: REST-API-SECRET
