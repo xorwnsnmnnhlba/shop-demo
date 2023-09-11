@@ -1,6 +1,10 @@
 package com.example.shopdemo.controllers;
 
 import com.example.shopdemo.application.CreateOrderService;
+import com.example.shopdemo.application.GetOrderDetailService;
+import com.example.shopdemo.application.GetOrderListService;
+import com.example.shopdemo.dtos.OrderDetailDto;
+import com.example.shopdemo.dtos.OrderListDto;
 import com.example.shopdemo.dtos.OrderRequestDto;
 import com.example.shopdemo.models.*;
 import com.example.shopdemo.security.AuthUser;
@@ -16,6 +20,10 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
 
     private final CreateOrderService createOrderService;
+
+    private final GetOrderListService getOrderListService;
+
+    private final GetOrderDetailService getOrderDetailService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -33,6 +41,23 @@ public class OrderController {
 
         createOrderService.createOrder(userId, receiver, payment);
         return "Created";
+    }
+
+    @GetMapping
+    public OrderListDto list(Authentication authentication) {
+        AuthUser authUser = (AuthUser) authentication.getPrincipal();
+        UserId userId = new UserId(authUser.id());
+
+        return getOrderListService.getOrderList(userId);
+    }
+
+    @GetMapping("/{id}")
+    public OrderDetailDto detail(Authentication authentication, @PathVariable String id) {
+        AuthUser authUser = (AuthUser) authentication.getPrincipal();
+        OrderId orderId = new OrderId(id);
+        UserId userId = new UserId(authUser.id());
+
+        return getOrderDetailService.getOrderDetail(orderId, userId);
     }
 
 }

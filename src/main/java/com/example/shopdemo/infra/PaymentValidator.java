@@ -6,7 +6,6 @@ import com.example.shopdemo.infra.dtos.PortoneTokenResultDto;
 import com.example.shopdemo.models.Money;
 import com.example.shopdemo.models.Order;
 import com.example.shopdemo.models.Payment;
-import lombok.ToString;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
@@ -15,27 +14,28 @@ import org.springframework.web.client.RestTemplate;
 
 
 @Service
-@ToString
 public class PaymentValidator {
-
     private final String restApiKey;
-
     private final String restApiSecret;
-
     private final RestTemplate restTemplate;
 
-
-    public PaymentValidator(@Value("${portone.rest_api_key}") String restApiKey,
-                            @Value("${portone.rest_api_secret}") String restApiSecret, RestTemplateBuilder builder) {
+    public PaymentValidator(
+            @Value("${portone.rest_api_key}") String restApiKey,
+            @Value("${portone.rest_api_secret}") String restApiSecret,
+            RestTemplateBuilder builder) {
         this.restApiKey = restApiKey;
         this.restApiSecret = restApiSecret;
         this.restTemplate = builder.build();
     }
 
     public void validate(Payment payment, Order order) {
+        // 1. Access Token 얻기
         String accessToken = getAccessToken();
+
+        // 2. 결제 정보 얻기
         Long amount = fetchPaymentAmount(payment, accessToken);
 
+        // 3. 금액 비교
         if (!order.totalPrice().equals(new Money(amount))) {
             throw new IllegalArgumentException("Payment amount doesn't match");
         }
@@ -47,22 +47,29 @@ public class PaymentValidator {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        PortoneTokenRequestDto requestDto = new PortoneTokenRequestDto(restApiKey, restApiSecret);
-        HttpEntity<PortoneTokenRequestDto> request = new HttpEntity<>(requestDto, headers);
+        PortoneTokenRequestDto portoneTokenRequestDto =
+                new PortoneTokenRequestDto(restApiKey, restApiSecret);
 
-        PortoneTokenResultDto resultDto = restTemplate.postForObject(url, request, PortoneTokenResultDto.class);
+        HttpEntity<PortoneTokenRequestDto> request =
+                new HttpEntity<>(portoneTokenRequestDto, headers);
+
+        PortoneTokenResultDto resultDto = restTemplate.postForObject(
+                url, request, PortoneTokenResultDto.class);
+
         PortoneTokenResultDto.Response responseDto = resultDto.response();
         return responseDto.accessToken();
     }
 
     private Long fetchPaymentAmount(Payment payment, String accessToken) {
-        String url = "https://api.iamport.kr/payments/" + payment.transactionId();
+        String url = "https://api.iamport.kr/payments/" +
+                payment.transactionId();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", accessToken);
 
         HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
         ResponseEntity<PortonePaymentDto> response = restTemplate.exchange(
                 url, HttpMethod.GET, requestEntity, PortonePaymentDto.class);
 
@@ -70,5 +77,4 @@ public class PaymentValidator {
         PortonePaymentDto.Response responseDto = paymentDto.response();
         return responseDto.amount();
     }
-
 }

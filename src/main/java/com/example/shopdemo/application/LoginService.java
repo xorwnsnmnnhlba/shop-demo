@@ -1,6 +1,7 @@
 package com.example.shopdemo.application;
 
 import com.example.shopdemo.security.AccessTokenGenerator;
+import com.example.shopdemo.security.AuthUser;
 import com.example.shopdemo.security.AuthUserDao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -21,14 +22,28 @@ public class LoginService {
 
     public String login(String email, String password) {
         return authUserDao.findByEmail(email)
-                .filter(authUser -> passwordEncoder.matches(password, authUser.password()))
-                .map(authUser -> {
-                    String id = authUser.id();
-                    String accessToken = accessTokenGenerator.generate(id);
-                    authUserDao.addAccessToken(id, accessToken);
-                    return accessToken;
-                })
+                .filter(authUser -> matchPassword(password, authUser))
+                .map(this::generateAccessToken)
                 .orElseThrow(() -> new BadCredentialsException("Login failed"));
+    }
+
+    public String loginAdmin(String email, String password) {
+        return authUserDao.findByEmail(email)
+                .filter(authUser -> matchPassword(password, authUser))
+                .filter(AuthUser::isAdmin)
+                .map(this::generateAccessToken)
+                .orElseThrow(() -> new BadCredentialsException("Login failed"));
+    }
+
+    private boolean matchPassword(String password, AuthUser authUser) {
+        return passwordEncoder.matches(password, authUser.password());
+    }
+
+    private String generateAccessToken(AuthUser authUser) {
+        String id = authUser.id();
+        String accessToken = accessTokenGenerator.generate(id);
+        authUserDao.addAccessToken(id, accessToken);
+        return accessToken;
     }
 
 }

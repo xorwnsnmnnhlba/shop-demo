@@ -30,9 +30,20 @@ class GetCategoryListServiceTest {
         CategoryId id = new CategoryId("0BV000CAT0001");
         Category category = new Category(id, "top");
 
-        given(categoryRepository.findAll()).willReturn(List.of(category));
+        given(categoryRepository.findAllByHiddenIsFalseOrderByIdAsc()).willReturn(List.of(category));
 
         List<Category> categories = getCategoryListService.getCategories();
+        assertThat(categories).hasSize(1);
+    }
+
+    @Test
+    void listAll() {
+        CategoryId id = new CategoryId("0BV000CAT0001");
+        Category category = new Category(id, "top");
+
+        given(categoryRepository.findAllByOrderByIdAsc()).willReturn(List.of(category));
+
+        List<Category> categories = getCategoryListService.getAllCategories();
         assertThat(categories).hasSize(1);
     }
 

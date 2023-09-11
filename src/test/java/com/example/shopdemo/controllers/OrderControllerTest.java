@@ -1,6 +1,9 @@
 package com.example.shopdemo.controllers;
 
 import com.example.shopdemo.application.CreateOrderService;
+import com.example.shopdemo.application.GetOrderDetailService;
+import com.example.shopdemo.application.GetOrderListService;
+import com.example.shopdemo.models.OrderId;
 import com.example.shopdemo.models.UserId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -24,6 +28,12 @@ class OrderControllerTest extends ControllerTest {
 
     @MockBean
     private CreateOrderService createOrderService;
+
+    @MockBean
+    private GetOrderListService getOrderListService;
+
+    @MockBean
+    private GetOrderDetailService getOrderDetailService;
 
     @Test
     @DisplayName("POST /orders")
@@ -54,5 +64,31 @@ class OrderControllerTest extends ControllerTest {
 
         verify(createOrderService).createOrder(eq(userId), any(), any());
     }
+
+    @Test
+    @DisplayName("GET /orders")
+    void list() throws Exception {
+        UserId userId = new UserId(USER_ID);
+
+        mockMvc.perform(get("/orders")
+                        .header("Authorization", "Bearer " + userAccessToken))
+                .andExpect(status().isOk());
+
+        verify(getOrderListService).getOrderList(userId);
+    }
+
+    @Test
+    @DisplayName("GET /orders/{id}")
+    void detail() throws Exception {
+        UserId userId = new UserId(USER_ID);
+        String orderId = "ORDER-ID";
+
+        mockMvc.perform(get("/orders/" + orderId)
+                        .header("Authorization", "Bearer " + userAccessToken))
+                .andExpect(status().isOk());
+
+        verify(getOrderDetailService).getOrderDetail(new OrderId(orderId), userId);
+    }
+
 
 }

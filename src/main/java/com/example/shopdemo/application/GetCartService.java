@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class GetCartService {
 
     private final CartRepository cartRepository;

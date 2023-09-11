@@ -1,4 +1,4 @@
-package com.example.shopdemo.controllers;
+package com.example.shopdemo.controllers.admin;
 
 import com.example.shopdemo.application.LoginService;
 import com.example.shopdemo.application.LogoutService;
@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/session")
-public class SessionController {
+@RequestMapping("/admin/session")
+public class AdminSessionController {
 
     private final LoginService loginService;
 
@@ -22,22 +22,23 @@ public class SessionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public LoginResultDto login(@RequestBody LoginRequestDto loginRequestDto) {
-        String accessToken = loginService.login(loginRequestDto.email(), loginRequestDto.password());
+    public LoginResultDto loginAdmin(@RequestBody LoginRequestDto loginRequestDto) {
+        String accessToken = loginService.loginAdmin(loginRequestDto.email(), loginRequestDto.password());
         return new LoginResultDto(accessToken);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String loginFailed() {
+    public String loginAdminFailed() {
         return "Bad Request";
     }
 
     @DeleteMapping
-    public String logout(Authentication authentication) {
+    public String logoutAdmin(Authentication authentication) {
         AuthUser authUser = (AuthUser) authentication.getPrincipal();
         logoutService.logout(authUser.accessToken());
 
         return "Logout";
     }
+
 }

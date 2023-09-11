@@ -59,6 +59,10 @@ public class Order extends BaseEntity {
         return id;
     }
 
+    public UserId userId() {
+        return userId;
+    }
+
     public String title() {
         OrderLineItem lineItem = lineItems.get(0);
         int size = lineItems.size();

@@ -1,5 +1,7 @@
 package com.example.shopdemo.security;
 
+import com.example.shopdemo.models.Role;
+
 public record AuthUser(String id, String email, String password, String role, String accessToken) {
 
     public static AuthUser of(String id, String email, String password, String role) {
@@ -10,4 +12,8 @@ public record AuthUser(String id, String email, String password, String role, St
         return new AuthUser(id, "", "", role, accessToken);
     }
 
+    public boolean isAdmin() {
+        return Role.valueOf(role).equals(Role.ROLE_ADMIN);
+    }
+    
 }

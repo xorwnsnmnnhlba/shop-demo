@@ -1,26 +1,27 @@
 package com.example.shopdemo.application;
 
 import com.example.shopdemo.models.Category;
+import com.example.shopdemo.models.CategoryId;
 import com.example.shopdemo.repositories.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
+@Transactional
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
-public class GetCategoryListService {
+public class UpdateCategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    public List<Category> getCategories() {
-        return categoryRepository.findAllByHiddenIsFalseOrderByIdAsc();
-    }
+    public void updateCategory(CategoryId id, String name, boolean hidden) {
+        Category category = categoryRepository.findById(id).orElseThrow();
+        category.changeName(name);
 
-    public List<Category> getAllCategories() {
-        return categoryRepository.findAllByOrderByIdAsc();
+        if (hidden) {
+            category.hide();
+        } else {
+            category.show();
+        }
     }
-
 }

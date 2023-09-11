@@ -16,9 +16,16 @@ public class Category extends BaseEntity {
 
     private String name;
 
-    public Category(CategoryId id, String name) {
+    private boolean hidden;
+
+    public Category(CategoryId id, String name, boolean hidden) {
         this.id = id;
         this.name = name;
+        this.hidden = hidden;
+    }
+
+    public Category(CategoryId id, String name) {
+        this(id, name, false);
     }
 
     public CategoryId id() {
@@ -27,6 +34,22 @@ public class Category extends BaseEntity {
 
     public String name() {
         return name;
+    }
+
+    public boolean hidden() {
+        return hidden;
+    }
+
+    public void changeName(String name) {
+        this.name = name;
+    }
+
+    public void show() {
+        this.hidden = false;
+    }
+
+    public void hide() {
+        this.hidden = true;
     }
 
 }

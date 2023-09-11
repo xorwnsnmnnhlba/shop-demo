@@ -1,26 +1,22 @@
 package com.example.shopdemo.application;
 
 import com.example.shopdemo.models.Category;
+import com.example.shopdemo.models.CategoryId;
 import com.example.shopdemo.repositories.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
+@Transactional
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
-public class GetCategoryListService {
+public class CreateCategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    public List<Category> getCategories() {
-        return categoryRepository.findAllByHiddenIsFalseOrderByIdAsc();
-    }
-
-    public List<Category> getAllCategories() {
-        return categoryRepository.findAllByOrderByIdAsc();
+    public void createCategory(String name) {
+        Category category = new Category(CategoryId.generate(), name, true);
+        categoryRepository.save(category);
     }
 
 }
