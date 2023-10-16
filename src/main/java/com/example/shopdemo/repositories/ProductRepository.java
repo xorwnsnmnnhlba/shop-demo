@@ -9,7 +9,11 @@ import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, ProductId> {
 
-    List<Product> findAll();
+    List<Product> findAllByOrderByIdAsc();
 
     List<Product> findAllByCategoryId(CategoryId categoryId);
+
+    List<Product> findAllByHiddenIsFalseOrderByIdAsc();
+
+    List<Product> findAllByCategoryIdAndHiddenIsFalseOrderByIdAsc(CategoryId categoryId);
 }

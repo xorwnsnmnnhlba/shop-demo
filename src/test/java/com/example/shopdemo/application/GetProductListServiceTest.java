@@ -1,5 +1,7 @@
 package com.example.shopdemo.application;
 
+import com.example.shopdemo.Fixtures;
+import com.example.shopdemo.dtos.AdminProductListDto;
 import com.example.shopdemo.models.*;
 import com.example.shopdemo.repositories.CategoryRepository;
 import com.example.shopdemo.repositories.ProductRepository;
@@ -7,7 +9,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -52,4 +56,19 @@ class GetProductListServiceTest {
         given(categoryRepository.findAll()).willReturn(List.of(category));
         given(productRepository.findAll()).willReturn(List.of(product));
     }
+
+    @Test
+    void getProductListDto() {
+        Product product = Fixtures.product("맨투맨");
+        CategoryId categoryId = product.categoryId();
+        Category category = new Category(categoryId, "카테고리", false);
+
+        given(productRepository.findAllByOrderByIdAsc()).willReturn(List.of(product));
+        given(categoryRepository.findById(categoryId)).willReturn(Optional.of(category));
+
+        AdminProductListDto adminProductListDto = getProductListService.getAdminProductListDto();
+
+        assertThat(adminProductListDto.products()).hasSize(1);
+    }
+
 }

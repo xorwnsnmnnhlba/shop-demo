@@ -23,4 +23,16 @@ public class Receiver {
     @Embedded
     private PhoneNumber phoneNumber;
 
+    public String name() {
+        return name;
+    }
+
+    public Address address() {
+        return address;
+    }
+
+    public PhoneNumber phoneNumber() {
+        return phoneNumber;
+    }
+    
 }

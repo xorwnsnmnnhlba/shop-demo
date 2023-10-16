@@ -40,7 +40,7 @@ public class User extends BaseEntity {
     }
 
     public String email() {
-        return name;
+        return email;
     }
 
     public Role role() {

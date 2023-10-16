@@ -58,6 +58,7 @@ class GetOrderListServiceTest {
         given(userRepository.findAllByIdIn(List.of(user.id()))).willReturn(List.of(user));
 
         AdminOrderListDto ordersDto = getOrderListService.getAdminOrderList();
+        assertThat(ordersDto.orders()).hasSize(1);
     }
 
 }

@@ -26,7 +26,15 @@ public class Image extends BaseEntity {
         this.url = url;
     }
 
+    public ImageId id() {
+        return id;
+    }
+
     public String url() {
         return url;
+    }
+
+    public void changeUrl(String url) {
+        this.url = url;
     }
 }

@@ -28,4 +28,8 @@ public class ProductOptionItem extends BaseEntity {
     public String name() {
         return name;
     }
+
+    public void changeName(String name) {
+        this.name = name;
+    }
 }

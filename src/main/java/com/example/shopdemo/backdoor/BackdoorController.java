@@ -145,17 +145,24 @@ public class BackdoorController {
         LocalDateTime now = LocalDateTime.now();
 
         jdbcTemplate.update("""
-                        INSERT INTO products(id, category_id, name, price, description, created_at, updated_at) 
+                        INSERT INTO products(id, category_id, name, price, description, hidden, created_at, updated_at) 
                         VALUES (?, ?, ?, ?, ?, ?, ?)
                         """,
-                "0BV000PRO0001", "0BV000CAT0001", "맨투맨", 128_000L, "편하게 입을 수 있는 맨투맨", now, now
+                "0BV000PRO0001", "0BV000CAT0001", "맨투맨", 128_000L, "편하게 입을 수 있는 맨투맨", false, now, now
         );
 
         jdbcTemplate.update("""
-                        INSERT INTO products(id, category_id, name, price, description, created_at, updated_at) 
+                        INSERT INTO products(id, category_id, name, price, description, hidden, created_at, updated_at) 
                         VALUES (?, ?, ?, ?, ?, ?, ?)
                         """,
-                "0BV000PRO0002", "0BV000CAT0002", "셔츠", 118_000L, "편합니다", now, now
+                "0BV000PRO0002", "0BV000CAT0002", "셔츠", 118_000L, "편합니다", false, now, now
+        );
+
+        jdbcTemplate.update("""
+                        INSERT INTO products(id, category_id, name, price, description, hidden, created_at, updated_at) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                        """,
+                "0BV000PRO0003", "0BV000CAT0001", "HIDDEN", 256_000L, "Hidden Product", true, now, now
         );
     }
 
@@ -234,6 +241,14 @@ public class BackdoorController {
                 "0BV000IMG0002", "0BV000PRO0002",
                 "https://ahastudio.github.io/my-image-assets/images/cbcl-products/02.jpg", now, now
         );
+
+        jdbcTemplate.update("""
+                        INSERT INTO images(id, product_id, url, created_at, updated_at) 
+                        VALUES (?, ?, ?, ?, ?)
+                        """,
+                "0BV000IMG0003", "0BV000PRO0003",
+                "https://ahastudio.github.io/my-image-assets/images/cbcl-products/01.jpg", now, now
+        );
     }
 
     private void createOrders() {
@@ -245,7 +260,7 @@ public class BackdoorController {
                             status, ordered_at, created_at, updated_at)
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                         """,
-                "0BV00ODR0001", "0BV00USR0001", 246_000, "테스터", "상원12길 34", "ㅇㅇㅇ호", "04790",
+                "0BV000ODR0001", "0BV000USR0001", 246_000, "테스터", "상원12길 34", "ㅇㅇㅇ호", "04790",
                 "010-1234-5678", "PaymentMerchantID", "PaymentTransactionID",
                 "PAID", now, now, now
         );
@@ -259,7 +274,7 @@ public class BackdoorController {
                             total_price, created_at, updated_at)
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                         """,
-                "0BV00OLI0001", "0BV00ODR0001", "0BV00PRO0001", "맨투맨", 128_000, 1,
+                "0BV00OLI0001", "0BV000ODR0001", "0BV00PRO0001", "맨투맨", 128_000, 1,
                 128_000, now, now
         );
 
@@ -268,7 +283,7 @@ public class BackdoorController {
                             total_price, created_at, updated_at)
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                         """,
-                "0BV00OLI0002", "0BV00ODR0001", "0BV00PRO0002", "셔츠", 118_000, 1,
+                "0BV00OLI0002", "0BV000ODR0001", "0BV00PRO0002", "셔츠", 118_000, 1,
                 118_000, now, now
         );
     }

@@ -1,5 +1,6 @@
 package com.example.shopdemo.models;
 
+import com.example.shopdemo.dtos.AdminUpdateProductDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -26,7 +27,7 @@ public class ProductOption extends BaseEntity {
     public ProductOption(ProductOptionId id, String name, List<ProductOptionItem> items) {
         this.id = id;
         this.name = name;
-        this.items = items;
+        this.items = new ArrayList<>(items);
     }
 
     public ProductOptionId id() {
@@ -47,5 +48,25 @@ public class ProductOption extends BaseEntity {
 
     public ProductOptionItem itemById(ProductOptionItemId itemId) {
         return items.stream().filter(item -> Objects.equals(item.id(), itemId)).findFirst().orElseThrow();
+    }
+
+    public void changeName(String name) {
+        this.name = name;
+    }
+
+    public void updateItems(List<AdminUpdateProductDto.OptionItemDto> items) {
+        this.items.removeIf(item -> {
+            return items.stream().noneMatch(i -> item.id().toString().equals(i.id()));
+        });
+
+        items.forEach(item -> {
+            if (item.id() == null) {
+                this.items.add(new ProductOptionItem(ProductOptionItemId.generate(), item.name()));
+                return;
+            }
+            this.items.stream().filter(i -> i.id().toString().equals(item.id()))
+                    .forEach(i -> i.changeName(item.name()));
+        });
+
     }
 }

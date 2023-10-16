@@ -46,7 +46,8 @@ public class AdminUserControllerTest extends ControllerTest {
         mockMvc.perform(get("/admin/users")
                         .header("Authorization", "Bearer " + adminAccessToken))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("name")));
+                .andExpect(content().string(containsString("name")))
+                .andExpect(content().string(containsString("\"email\":\"admin@example.com\"")));
     }
 
     @Test

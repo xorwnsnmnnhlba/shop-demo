@@ -63,6 +63,10 @@ public class Order extends BaseEntity {
         return userId;
     }
 
+    public List<OrderLineItem> lineItems() {
+        return lineItems;
+    }
+
     public String title() {
         OrderLineItem lineItem = lineItems.get(0);
         int size = lineItems.size();
@@ -91,4 +95,15 @@ public class Order extends BaseEntity {
         return orderedAt;
     }
 
+    public Receiver receiver() {
+        return receiver;
+    }
+
+    public Payment payment() {
+        return payment;
+    }
+
+    public void changeStatus(OrderStatus status) {
+        this.status = status;
+    }
 }

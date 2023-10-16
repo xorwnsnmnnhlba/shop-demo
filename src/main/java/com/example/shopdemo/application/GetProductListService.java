@@ -1,5 +1,7 @@
 package com.example.shopdemo.application;
 
+import com.example.shopdemo.dtos.AdminProductListDto;
+import com.example.shopdemo.dtos.AdminProductSummaryDto;
 import com.example.shopdemo.dtos.ProductListDto;
 import com.example.shopdemo.dtos.ProductSummaryDto;
 import com.example.shopdemo.models.Category;
@@ -34,7 +36,17 @@ public class GetProductListService {
     }
 
     public List<Product> findProducts(String categoryId) {
-        return (categoryId == null) ? productRepository.findAll()
-                : productRepository.findAllByCategoryId(new CategoryId(categoryId));
+        return (categoryId == null) ? productRepository.findAllByHiddenIsFalseOrderByIdAsc()
+                : productRepository.findAllByCategoryIdAndHiddenIsFalseOrderByIdAsc(new CategoryId(categoryId));
+    }
+
+    public AdminProductListDto getAdminProductListDto() {
+        List<Product> products = productRepository.findAllByOrderByIdAsc();
+        List<AdminProductSummaryDto> productSummaryDtos = products.stream().map(product -> {
+            Category category = categoryRepository.findById(product.categoryId()).orElseThrow();
+            return AdminProductSummaryDto.of(product, category);
+        }).toList();
+        
+        return new AdminProductListDto(productSummaryDtos);
     }
 }

@@ -19,8 +19,11 @@ public class Payment {
     @Column(name = "payment_transaction_id")
     private String transactionId;
 
+    public String merchantId() {
+        return merchantId;
+    }
+
     public String transactionId() {
         return transactionId;
     }
-
 }
